@@ -26,6 +26,7 @@ public class Office {
     private String floor;
 
     @OneToMany(mappedBy = "office", cascade = CascadeType.ALL)
+    @Builder.Default
     private Set<Appointment> appointments = new HashSet<>();
 
     private void addAppointment(Appointment appointment) {

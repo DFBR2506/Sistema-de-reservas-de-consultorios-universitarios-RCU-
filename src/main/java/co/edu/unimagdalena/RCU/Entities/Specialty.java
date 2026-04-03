@@ -22,6 +22,7 @@ public class Specialty {
     private String name;
 
     @OneToMany(mappedBy = "specialty", cascade = CascadeType.ALL)
+    @Builder.Default
     private Set<Doctor> doctors = new HashSet<>();
 
     private void addDoctor(Doctor doctor) {

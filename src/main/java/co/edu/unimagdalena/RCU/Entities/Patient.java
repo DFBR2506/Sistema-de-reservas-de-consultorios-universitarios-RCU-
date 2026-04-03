@@ -17,6 +17,7 @@ import jakarta.persistence.*;
 @SuperBuilder
 public class Patient extends Person{
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    @Builder.Default
     private Set<Appointment> appointments = new HashSet<>();
 
     private void addAppointment(Appointment appointment) {

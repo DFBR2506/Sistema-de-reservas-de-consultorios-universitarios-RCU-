@@ -25,7 +25,9 @@ public class Doctor extends Person {
     @JoinColumn(name = "Specialty_id", nullable = false)
     private Specialty specialty;
 
+
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    @Builder.Default
     private Set<DoctorSchedule> schedules = new HashSet<>();
 
     private void addSchedule(DoctorSchedule schedule) {
@@ -34,6 +36,7 @@ public class Doctor extends Person {
     }
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    @Builder.Default
     private Set<Appointment> appointments = new HashSet<>();
 
     private void addAppointment(Appointment appointment) {

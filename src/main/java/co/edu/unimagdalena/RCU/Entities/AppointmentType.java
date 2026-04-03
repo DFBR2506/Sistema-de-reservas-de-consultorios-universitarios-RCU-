@@ -30,6 +30,7 @@ public class AppointmentType {
     private Integer durationMinutes;
 
     @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL)
+    @Builder.Default
     private Set<Appointment> appointments = new HashSet<>();
 
     private void addAppointment(Appointment appointment) {
