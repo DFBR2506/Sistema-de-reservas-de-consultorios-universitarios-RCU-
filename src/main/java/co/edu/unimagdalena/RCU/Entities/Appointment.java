@@ -5,6 +5,8 @@ import co.edu.unimagdalena.RCU.entities.enums.Status;
 import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalTime;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -46,10 +48,10 @@ public class Appointment {
     private String cancellationReason;
 
     @Column(name = "start_at", nullable = false)
-    private Instant startAt;
+    private LocalTime startAt;
 
     @Column(name = "end_at", nullable = false)
-    private Instant endAt;
+    private LocalTime endAt;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

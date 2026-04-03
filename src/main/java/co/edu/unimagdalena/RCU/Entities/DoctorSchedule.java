@@ -5,6 +5,8 @@ import co.edu.unimagdalena.RCU.entities.enums.DayOfWeek;
 import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalTime;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -28,10 +30,10 @@ public class DoctorSchedule {
     private DayOfWeek dayOfWeek;
 
     @Column(name = "start_time", nullable = false)
-    private Instant startTime;
+    private LocalTime startTime;
 
     @Column(name = "end_time", nullable = false)
-    private Instant endTime;
+    private LocalTime endTime;
 
     @Column(name = "active", nullable = false, updatable = false)
     private Boolean active;
