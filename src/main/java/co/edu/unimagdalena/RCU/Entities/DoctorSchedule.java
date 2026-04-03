@@ -1,8 +1,8 @@
-package co.edu.unimagdalena.RCU.Entities;
+package co.edu.unimagdalena.RCU.entities;
 import java.util.*;
-import lombok.*;
 
-import co.edu.unimagdalena.RCU.Entities.Enums.DayOfWeek;
+import co.edu.unimagdalena.RCU.entities.enums.DayOfWeek;
+import lombok.*;
 
 import java.time.Instant;
 import jakarta.persistence.*;

@@ -1,8 +1,9 @@
-package co.edu.unimagdalena.RCU.Entities;
+package co.edu.unimagdalena.RCU.entities;
 import java.util.*;
+
+import co.edu.unimagdalena.RCU.entities.enums.Status;
 import lombok.*;
 
-import co.edu.unimagdalena.RCU.Entities.Enums.Status;
 import java.time.Instant;
 import jakarta.persistence.*;
 

@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.Entities.Enums;
+package co.edu.unimagdalena.RCU.entities.enums;
 
 public enum Gender {
     MALE, FEMALE, OTHER

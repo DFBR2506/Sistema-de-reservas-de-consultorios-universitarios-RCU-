@@ -1,7 +1,7 @@
-package co.edu.unimagdalena.RCU.Entities;
-import co.edu.unimagdalena.RCU.Entities.Enums.DocumentType;
-import co.edu.unimagdalena.RCU.Entities.Enums.*;
+package co.edu.unimagdalena.RCU.entities;
 import java.util.*;
+
+import co.edu.unimagdalena.RCU.entities.enums.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
