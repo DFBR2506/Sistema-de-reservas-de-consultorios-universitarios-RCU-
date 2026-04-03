@@ -1,13 +1,14 @@
-package co.edu.unimagdalena.RCU.Entities;
+package co.edu.unimagdalena.RCU.entities;
 import java.util.*;
 import lombok.*;
 
-import co.edu.unimagdalena.RCU.Entities.Enums.Status;
+import co.edu.unimagdalena.RCU.entities.enums.Status;
+
 import java.time.Instant;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "specialties")
+@Table(name = "appointments")
 @Getter
 @Setter
 @AllArgsConstructor
