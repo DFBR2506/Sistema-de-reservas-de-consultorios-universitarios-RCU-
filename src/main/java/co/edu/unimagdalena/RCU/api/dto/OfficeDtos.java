@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.dto;
+package co.edu.unimagdalena.RCU.api.dto;
 
 import java.io.Serializable;
 import java.util.UUID;

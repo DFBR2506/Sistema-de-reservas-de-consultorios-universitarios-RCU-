@@ -5,12 +5,10 @@ import co.edu.unimagdalena.RCU.entities.enums.Status;
 import lombok.*;
 
 import java.time.Instant;
-import java.time.LocalTime;
-
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "specialties")
+@Table(name = "appointments")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -42,16 +40,16 @@ public class Appointment {
     private Status status;
 
     @Column(name = "notes")
-    private String notes;
+    private String note;
 
     @Column(name = "cancellation_reason")
     private String cancellationReason;
 
     @Column(name = "start_at", nullable = false)
-    private LocalTime startAt;
+    private Instant startAt;
 
     @Column(name = "end_at", nullable = false)
-    private LocalTime endAt;
+    private Instant endAt;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
