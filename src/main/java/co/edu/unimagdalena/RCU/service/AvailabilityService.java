@@ -7,5 +7,5 @@ import java.util.UUID;
 import co.edu.unimagdalena.RCU.api.dto.AvailabilityDtos.AvailabilitySlotResponse;
 
 public interface AvailabilityService {
-List<AvailabilitySlotResponse> getAvailableSlots(UUID doctorId, UUID officeId, LocalDate date);
+    List<AvailabilitySlotResponse> getAvailableSlots(UUID doctorId, UUID officeId, LocalDate date);
 }
