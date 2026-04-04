@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.Exceptions;
+package co.edu.unimagdalena.RCU.exceptions;
 
 public class BusinessException extends RuntimeException {
     public BusinessException(String message) {

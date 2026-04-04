@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.Exceptions;
+package co.edu.unimagdalena.RCU.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {
