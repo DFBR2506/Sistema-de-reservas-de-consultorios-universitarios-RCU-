@@ -1,5 +1,6 @@
 package co.edu.unimagdalena.RCU.mapper;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

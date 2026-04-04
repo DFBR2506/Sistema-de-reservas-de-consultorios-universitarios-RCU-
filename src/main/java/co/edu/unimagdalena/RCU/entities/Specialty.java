@@ -1,5 +1,4 @@
 package co.edu.unimagdalena.RCU.entities;
-import co.edu.unimagdalena.RCU.entities.Doctor;
 
 import java.util.*;
 import lombok.*;
@@ -8,7 +7,7 @@ import java.time.Instant;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "specialities")
+@Table(name = "specialties")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,6 +29,12 @@ public class Specialty {
         doctors.add(doctor);
         doctor.setSpecialty(this);
     }
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
