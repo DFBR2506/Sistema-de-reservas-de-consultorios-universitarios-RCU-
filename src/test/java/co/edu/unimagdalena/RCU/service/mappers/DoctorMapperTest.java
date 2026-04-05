@@ -99,7 +99,7 @@ public class DoctorMapperTest {
             .documentNumber("9876543210")
             .gender(Gender.MALE)
             .licenseNumber("LIC-123456")
-            .active(true)
+            .active(false)
             .build();
         
         var specialtyId = UUID.randomUUID();
@@ -113,7 +113,7 @@ public class DoctorMapperTest {
             Gender.MALE,
             "LIC-654321",
             specialtyId,
-            false
+            true
         );
 
         // When
@@ -128,7 +128,7 @@ public class DoctorMapperTest {
         assertThat(doctor.getDocumentNumber()).isEqualTo(request.documentNumber());
         assertThat(doctor.getGender()).isEqualTo(request.gender());
         assertThat(doctor.getLicenseNumber()).isEqualTo(request.licenseNumber());
-        assertThat(doctor.getActive()).isEqualTo(request.active());
+        assertThat(doctor.getActive()).isEqualTo(true);
     }
 
     @Test
