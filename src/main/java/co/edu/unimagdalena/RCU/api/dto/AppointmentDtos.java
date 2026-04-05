@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
-import co.edu.unimagdalena.RCU.entities.enums.Status;
+import co.edu.unimagdalena.RCU.domine.entities.enums.Status;
 
 public class AppointmentDtos {
     public record CreateAppointmentRequest(

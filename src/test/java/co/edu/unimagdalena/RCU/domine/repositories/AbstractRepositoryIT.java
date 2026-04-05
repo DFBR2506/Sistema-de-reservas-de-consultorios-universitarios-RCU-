@@ -1,7 +1,8 @@
-package co.edu.unimagdalena.RCU;
+package co.edu.unimagdalena.RCU.domine.repositories;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -9,13 +10,18 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest
+/**
+ * Clase base para tests de repositorios.
+ */
+@DataJpaTest
 @Testcontainers
 @ActiveProfiles("test")
-class RcuApplicationTests {
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+public abstract class AbstractRepositoryIT {
 
 	@Container
-	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+
 
 	@DynamicPropertySource
 	static void configureDatasource(DynamicPropertyRegistry registry) {
@@ -23,9 +29,4 @@ class RcuApplicationTests {
 		registry.add("spring.datasource.username", postgres::getUsername);
 		registry.add("spring.datasource.password", postgres::getPassword);
 	}
-
-	@Test
-	void contextLoads() {
-	}
-
 }
