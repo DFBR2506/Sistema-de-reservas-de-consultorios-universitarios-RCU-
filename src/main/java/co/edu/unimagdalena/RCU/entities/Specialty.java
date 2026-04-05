@@ -1,5 +1,4 @@
 package co.edu.unimagdalena.RCU.entities;
-import co.edu.unimagdalena.RCU.entities.Doctor;
 
 import java.util.*;
 import lombok.*;
@@ -8,7 +7,7 @@ import java.time.Instant;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "specialities")
+@Table(name = "specialties")
 @Getter
 @Setter
 @AllArgsConstructor
