@@ -30,6 +30,12 @@ public class Specialty {
         doctor.setSpecialty(this);
     }
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
