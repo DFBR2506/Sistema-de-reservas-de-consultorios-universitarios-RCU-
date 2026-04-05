@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.Entities;
+package co.edu.unimagdalena.RCU.entities;
 import java.util.*;
 import lombok.*;
 

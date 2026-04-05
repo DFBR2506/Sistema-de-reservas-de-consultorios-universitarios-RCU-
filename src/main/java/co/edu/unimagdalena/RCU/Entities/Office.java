@@ -1,8 +1,8 @@
 package co.edu.unimagdalena.RCU.entities;
 import java.util.*;
-import lombok.*;
 
 import co.edu.unimagdalena.RCU.entities.enums.DayOfWeek;
+import lombok.*;
 
 import java.time.Instant;
 import jakarta.persistence.*;
@@ -20,10 +20,10 @@ public class Office {
     private UUID id;
 
     @Column(name = "code", nullable = false, unique = true)
-    private Integer code ;
+    private String code;
 
     @Column(name = "floor", nullable = false)
-    private String floor;
+    private Integer floor;
 
     @OneToMany(mappedBy = "office", cascade = CascadeType.ALL)
     @Builder.Default

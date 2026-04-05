@@ -1,8 +1,8 @@
 package co.edu.unimagdalena.RCU.entities;
 import java.util.*;
-import lombok.*;
 
 import co.edu.unimagdalena.RCU.entities.enums.Status;
+import lombok.*;
 
 import java.time.Instant;
 import jakarta.persistence.*;
@@ -40,7 +40,7 @@ public class Appointment {
     private Status status;
 
     @Column(name = "notes")
-    private String notes;
+    private String note;
 
     @Column(name = "cancellation_reason")
     private String cancellationReason;
