@@ -14,8 +14,9 @@ class AppointmentTypeRepositoryTest extends AbstractRepositoryIT {
 	AppointmentTypeRepository appointmentTypeRepository;
 
 	@Test
-	@DisplayName("AppointmentType: existe por nombre")
-	void shouldCheckExistsByName() {
+	@DisplayName("AppointmentType: existsByName retorna true cuando el nombre existe")
+	void shouldFindAppointmentTypeByNameWhenExists() {
+		// given
 		AppointmentType type = AppointmentType.builder()
 				.name("Control general")
 				.description("Consulta de control")
@@ -25,10 +26,20 @@ class AppointmentTypeRepositoryTest extends AbstractRepositoryIT {
 				.build();
 		appointmentTypeRepository.save(type);
 
+		// when
 		boolean exists = appointmentTypeRepository.existsByName("Control general");
+
+		// then
+		assertThat(exists).isTrue();
+	}
+
+	@Test
+	@DisplayName("AppointmentType: existsByName retorna false cuando el nombre no existe")
+	void shouldNotFindAppointmentTypeByNameWhenMissing() {
+		// when
 		boolean notExists = appointmentTypeRepository.existsByName("No existe");
 
-		assertThat(exists).isTrue();
+		// then
 		assertThat(notExists).isFalse();
 	}
 }

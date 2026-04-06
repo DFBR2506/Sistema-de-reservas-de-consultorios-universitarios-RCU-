@@ -11,36 +11,76 @@ import org.springframework.data.repository.query.Param;
 import co.edu.unimagdalena.RCU.domine.entities.Appointment;
 import co.edu.unimagdalena.RCU.domine.entities.enums.Status;
 
-public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
-    // aca van los query, pero tengo que implementar algunos para las validaciones del service
-    
-    boolean existsByDoctorIdAndStartAtLessThanAndEndAtGreaterThan(UUID doctorId, Instant endAt, Instant startAt); // ORM - consulta si un doctor tiene una cita que se solapa con un rango de tiempo específico
+public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {    
+    // Valida traslape de citas para un doctor (MINIMO).
+    boolean existsByDoctorIdAndStartAtLessThanAndEndAtGreaterThan(UUID doctorId, Instant endAt, Instant startAt);
 
-    boolean existsByOfficeIdAndStartAtLessThanAndEndAtGreaterThan(UUID officeId, Instant endAt, Instant startAt); // ORM - consulta si un consultorio tiene una cita que se solapa con un rango de tiempo específico
+    // Valida traslape de citas para un consultorio (MINIMO).
+    boolean existsByOfficeIdAndStartAtLessThanAndEndAtGreaterThan(UUID officeId, Instant endAt, Instant startAt);
 
-    boolean existsByPatientIdAndStartAtLessThanAndEndAtGreaterThan(UUID patientId, Instant endAt, Instant startAt); // ORM - consulta si un paciente tiene una cita que se solapa con un rango de tiempo específico
+    // Valida traslape de citas para un paciente.
+    boolean existsByPatientIdAndStartAtLessThanAndEndAtGreaterThan(UUID patientId, Instant endAt, Instant startAt);
 
-    List<Appointment> findByPatientIdAndStatus(UUID patientId, Status status); // ORM - consulta las citas de un paciente por su ID y estado
+    // Busca citas de un paciente por estado (MINIMO).
+    List<Appointment> findByPatientIdAndStatus(UUID patientId, Status status);
 
-    List<Appointment> findByDoctorIdAndStartAtBetween(UUID doctorId, Instant startAt, Instant endAt); // ORM - consulta las citas de un doctor por su ID y un rango de tiempo específico
+    // Busca citas de un doctor en un rango de fecha/hora.
+    List<Appointment> findByDoctorIdAndStartAtBetween(UUID doctorId, Instant startAt, Instant endAt);
 
-    List<Appointment> findByOfficeIdAndStartAtBetween(UUID officeId, Instant startAt, Instant endAt); // ORM - consulta las citas de un consultorio por su ID y un rango de tiempo específico
+    // Busca citas de un consultorio en un rango de fecha/hora.
+    List<Appointment> findByOfficeIdAndStartAtBetween(UUID officeId, Instant startAt, Instant endAt);
 
-    // Para ocupación de consultorios
+    // Busca citas por rango de fecha/hora global (MINIMO).
+    List<Appointment> findByStartAtBetween(Instant startAt, Instant endAt);
+
+    // Obtiene los bloques de citas ya ocupados de un doctor en una fecha concreta (MINIMO).
+    @Query("SELECT a FROM Appointment a " +
+        "WHERE a.doctor.id = :doctorId " +
+        "AND a.startAt >= :dayStart " +
+        "AND a.startAt < :dayEnd " +
+        "AND a.status <> 'CANCELLED' " +
+        "ORDER BY a.startAt ASC")
+    List<Appointment> findBookedSlotsByDoctorAndDate(
+        @Param("doctorId") UUID doctorId,
+        @Param("dayStart") Instant dayStart,
+        @Param("dayEnd") Instant dayEnd
+    );
+
+    // Calcula ocupación de consultorios por rango (MINIMO).
     @Query("SELECT a.office.id, a.office.code, COUNT(a) FROM Appointment a " +
         "WHERE a.startAt BETWEEN :startAt AND :endAt " +
         "GROUP BY a.office.id, a.office.code " +
         "ORDER BY COUNT(a) DESC")
     List<Object[]> findOfficeOccupancy(@Param("startAt") Instant startAt, @Param("endAt") Instant endAt);
 
-    // Para productividad de doctores
+    // Calcula ocupación diaria de consultorios (MINIMO).
+    @Query("SELECT a.office.id, a.office.code, COUNT(a) FROM Appointment a " +
+        "WHERE a.startAt BETWEEN :dayStart AND :dayEnd " +
+        "GROUP BY a.office.id, a.office.code " +
+        "ORDER BY COUNT(a) DESC")
+    List<Object[]> findOfficeDailyOccupancy(@Param("dayStart") Instant dayStart, @Param("dayEnd") Instant dayEnd);
+
+    // Cuenta citas CANCELLED y NO_SHOW agrupadas por especialidad (MINIMO).
+    @Query("SELECT a.doctor.specialty.id, a.doctor.specialty.name, " +
+        "SUM(CASE WHEN a.status = 'CANCELLED' THEN 1 ELSE 0 END), " +
+        "SUM(CASE WHEN a.status = 'NO_SHOW' THEN 1 ELSE 0 END) " +
+        "FROM Appointment a " +
+        "WHERE a.startAt BETWEEN :startAt AND :endAt " +
+        "GROUP BY a.doctor.specialty.id, a.doctor.specialty.name " +
+        "ORDER BY a.doctor.specialty.name ASC")
+    List<Object[]> countCancelledAndNoShowBySpecialty(
+        @Param("startAt") Instant startAt,
+        @Param("endAt") Instant endAt
+    );
+
+    // Ranking de profesionales por citas completadas (MINIMO).
     @Query("SELECT a.doctor.id, a.doctor.firstName, a.doctor.lastName, COUNT(a) FROM Appointment a " +
         "WHERE a.status = 'COMPLETED' " +
         "GROUP BY a.doctor.id, a.doctor.firstName, a.doctor.lastName " +
         "ORDER BY COUNT(a) DESC")
     List<Object[]> findDoctorProductivity();
 
-    // Para pacientes con más no-shows
+    // Pacientes con mayor número de NO_SHOW en un período (MINIMO).
     @Query("SELECT a.patient.id, a.patient.firstName, a.patient.lastName, COUNT(a) FROM Appointment a " +
         "WHERE a.status = 'NO_SHOW' " +
         "AND a.startAt BETWEEN :startAt AND :endAt " +

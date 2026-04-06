@@ -14,8 +14,9 @@ class OfficeRepositoryTest extends AbstractRepositoryIT {
 	OfficeRepository officeRepository;
 
 	@Test
-	@DisplayName("Office: existe por codigo")
-	void shouldCheckExistsByCode() {
+	@DisplayName("Office: existsByCode retorna true cuando el código existe")
+	void shouldFindOfficeByCodeWhenExists() {
+		// given
 		Office office = Office.builder()
 				.code("A-101")
 				.floor(1)
@@ -24,10 +25,20 @@ class OfficeRepositoryTest extends AbstractRepositoryIT {
 				.build();
 		officeRepository.save(office);
 
+		// when
 		boolean exists = officeRepository.existsByCode("A-101");
+
+		// then
+		assertThat(exists).isTrue();
+	}
+
+	@Test
+	@DisplayName("Office: existsByCode retorna false cuando el código no existe")
+	void shouldNotFindOfficeByCodeWhenMissing() {
+		// when
 		boolean notExists = officeRepository.existsByCode("B-202");
 
-		assertThat(exists).isTrue();
+		// then
 		assertThat(notExists).isFalse();
 	}
 }

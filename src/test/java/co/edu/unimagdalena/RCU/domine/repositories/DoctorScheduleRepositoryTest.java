@@ -27,46 +27,97 @@ class DoctorScheduleRepositoryTest extends AbstractRepositoryIT {
     SpecialtyRepository specialtyRepository;
 
     @Test
-    @DisplayName("DoctorSchedule: consulta por doctor y dia")
-    void shouldQueryByDoctorAndDayOfWeek() {
+    @DisplayName("DoctorSchedule: consulta por doctor y día existente")
+    void shouldFindScheduleByDoctorAndDay() {
+	// given
 	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	Doctor doctor = createDoctor("jose." + suffix + "@demo.com", "DOCSCH-" + suffix, "LICSCH-" + suffix);
+	doctorScheduleRepository.save(createSchedule(doctor, DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(12, 0)));
 
+	// when
+	boolean exists = doctorScheduleRepository.existsByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.MONDAY);
+
+	// then
+	assertThat(exists).isTrue();
+	assertThat(doctorScheduleRepository.findByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.MONDAY)).isPresent();
+    }
+
+    @Test
+    @DisplayName("DoctorSchedule: no encuentra horario para día no configurado")
+    void shouldNotFindScheduleForUnconfiguredDay() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	Doctor doctor = createDoctor("maria." + suffix + "@demo.com", "DOCSCH2-" + suffix, "LICSCH2-" + suffix);
+	doctorScheduleRepository.save(createSchedule(doctor, DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(12, 0)));
+
+	// when / then
+	assertThat(doctorScheduleRepository.existsByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.TUESDAY)).isFalse();
+	assertThat(doctorScheduleRepository.findByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.TUESDAY)).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("DoctorSchedule: devuelve múltiples horarios de un mismo doctor")
+    void shouldReturnMultipleSchedulesForDoctor() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	Doctor doctor = createDoctor("pedro." + suffix + "@demo.com", "DOCSCH3-" + suffix, "LICSCH3-" + suffix);
+	doctorScheduleRepository.save(createSchedule(doctor, DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(12, 0)));
+	doctorScheduleRepository.save(createSchedule(doctor, DayOfWeek.TUESDAY, LocalTime.of(13, 0), LocalTime.of(17, 0)));
+
+	// when
+	var schedules = doctorScheduleRepository.findByDoctorId(doctor.getId());
+
+	// then
+	assertThat(schedules).hasSize(2);
+	assertThat(schedules).extracting(DoctorSchedule::getDayOfWeek)
+		.containsExactlyInAnyOrder(DayOfWeek.MONDAY, DayOfWeek.TUESDAY);
+    }
+
+    @Test
+    @DisplayName("DoctorSchedule: retorna vacío cuando el doctor no tiene horarios")
+    void shouldReturnEmptyWhenDoctorHasNoSchedules() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	Doctor doctor = createDoctor("sofia." + suffix + "@demo.com", "DOCSCH4-" + suffix, "LICSCH4-" + suffix);
+
+	// when
+	var schedules = doctorScheduleRepository.findByDoctorId(doctor.getId());
+
+	// then
+	assertThat(schedules).isEmpty();
+    }
+
+    private Doctor createDoctor(String email, String documentNumber, String licenseNumber) {
 	Specialty specialty = specialtyRepository.save(Specialty.builder()
-		.name("Medicina Interna-" + suffix)
+		.name("Medicina Interna-" + UUID.randomUUID())
 		.description("Especialidad")
 		.active(true)
 		.createdAt(Instant.now())
 		.build());
 
-	Doctor doctor = doctorRepository.save(Doctor.builder()
+	return doctorRepository.save(Doctor.builder()
 		.firstName("Jose")
 		.lastName("Rojas")
-		.email("jose." + suffix + "@demo.com")
+		.email(email)
 		.phone("3222222222")
 		.documentType(DocumentType.CC)
-		.documentNumber("DOCSCH-" + suffix)
+		.documentNumber(documentNumber)
 		.gender(Gender.MALE)
 		.active(true)
 		.createdAt(Instant.now())
-		.licenseNumber("LICSCH-" + suffix)
+		.licenseNumber(licenseNumber)
 		.specialty(specialty)
 		.build());
+    }
 
-	DoctorSchedule schedule = DoctorSchedule.builder()
+    private DoctorSchedule createSchedule(Doctor doctor, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+	return DoctorSchedule.builder()
 		.doctor(doctor)
-		.dayOfWeek(DayOfWeek.MONDAY)
-		.startTime(LocalTime.of(8, 0))
-		.endTime(LocalTime.of(12, 0))
+		.dayOfWeek(dayOfWeek)
+		.startTime(startTime)
+		.endTime(endTime)
 		.active(true)
 		.createdAt(Instant.now())
 		.build();
-	doctorScheduleRepository.save(schedule);
-
-	assertThat(doctorScheduleRepository.existsByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.MONDAY)).isTrue();
-	assertThat(doctorScheduleRepository.existsByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.TUESDAY)).isFalse();
-
-	assertThat(doctorScheduleRepository.findByDoctorId(doctor.getId())).hasSize(1);
-	assertThat(doctorScheduleRepository.findByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.MONDAY)).isPresent();
-	assertThat(doctorScheduleRepository.findByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.TUESDAY)).isNotPresent();
     }
 }

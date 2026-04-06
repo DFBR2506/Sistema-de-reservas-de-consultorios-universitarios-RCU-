@@ -39,15 +39,16 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
     SpecialtyRepository specialtyRepository;
 
     @Test
-    @DisplayName("Appointment: solapes y consultas por rango/estado")
-    void shouldValidateOverlapAndBasicFilters() {
+    @DisplayName("Appointment: detecta traslape para doctor/office/patient")
+    void shouldDetectOverlapForDoctorOfficeAndPatient() {
+	// given
 	String suffix = UUID.randomUUID().toString().substring(0, 8);
 	TestData data = createBaseData(suffix);
 
-	Instant start = Instant.parse("2026-04-01T10:00:00Z");
-	Instant end = Instant.parse("2026-04-01T11:00:00Z");
-	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED, start, end);
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED,
+		Instant.parse("2026-04-01T10:00:00Z"), Instant.parse("2026-04-01T11:00:00Z"));
 
+	// when
 	boolean doctorOverlap = appointmentRepository
 		.existsByDoctorIdAndStartAtLessThanAndEndAtGreaterThan(data.doctor.getId(),
 			Instant.parse("2026-04-01T11:30:00Z"),
@@ -61,28 +62,221 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 			Instant.parse("2026-04-01T11:30:00Z"),
 			Instant.parse("2026-04-01T10:30:00Z"));
 
+	// then
 	assertThat(doctorOverlap).isTrue();
 	assertThat(officeOverlap).isTrue();
 	assertThat(patientOverlap).isTrue();
-
-	List<Appointment> byPatientAndStatus = appointmentRepository.findByPatientIdAndStatus(data.patient.getId(),
-		Status.SCHEDULED);
-	assertThat(byPatientAndStatus).hasSize(1);
-
-	List<Appointment> byDoctorRange = appointmentRepository.findByDoctorIdAndStartAtBetween(data.doctor.getId(),
-		Instant.parse("2026-04-01T00:00:00Z"),
-		Instant.parse("2026-04-01T23:59:59Z"));
-	assertThat(byDoctorRange).hasSize(1);
-
-	List<Appointment> byOfficeRange = appointmentRepository.findByOfficeIdAndStartAtBetween(data.office.getId(),
-		Instant.parse("2026-04-01T00:00:00Z"),
-		Instant.parse("2026-04-01T23:59:59Z"));
-	assertThat(byOfficeRange).hasSize(1);
     }
 
     @Test
-    @DisplayName("Appointment: reportes de ocupacion, productividad y no-show")
-    void shouldCalculateReports() {
+    @DisplayName("Appointment: no detecta traslape cuando los rangos no coinciden")
+    void shouldNotDetectOverlapWhenRangesDoNotIntersect() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	TestData data = createBaseData(suffix);
+
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED,
+		Instant.parse("2026-04-01T10:00:00Z"), Instant.parse("2026-04-01T11:00:00Z"));
+
+	// when / then
+	assertThat(appointmentRepository.existsByDoctorIdAndStartAtLessThanAndEndAtGreaterThan(
+		data.doctor.getId(), Instant.parse("2026-04-01T13:00:00Z"), Instant.parse("2026-04-01T12:00:00Z"))).isFalse();
+	assertThat(appointmentRepository.existsByOfficeIdAndStartAtLessThanAndEndAtGreaterThan(
+		data.office.getId(), Instant.parse("2026-04-01T13:00:00Z"), Instant.parse("2026-04-01T12:00:00Z"))).isFalse();
+	assertThat(appointmentRepository.existsByPatientIdAndStartAtLessThanAndEndAtGreaterThan(
+		data.patient.getId(), Instant.parse("2026-04-01T13:00:00Z"), Instant.parse("2026-04-01T12:00:00Z"))).isFalse();
+    }
+
+    @Test
+    @DisplayName("Appointment: filtra por estado y rangos")
+    void shouldFilterByStatusAndRanges() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	TestData data = createBaseData(suffix);
+
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED,
+		Instant.parse("2026-04-01T10:00:00Z"), Instant.parse("2026-04-01T11:00:00Z"));
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.CANCELLED,
+		Instant.parse("2026-04-01T12:00:00Z"), Instant.parse("2026-04-01T13:00:00Z"));
+
+	// when / then
+	assertThat(appointmentRepository.findByPatientIdAndStatus(data.patient.getId(), Status.SCHEDULED)).hasSize(1);
+	assertThat(appointmentRepository.findByDoctorIdAndStartAtBetween(data.doctor.getId(),
+		Instant.parse("2026-04-01T00:00:00Z"), Instant.parse("2026-04-01T23:59:59Z"))).hasSize(2);
+	assertThat(appointmentRepository.findByOfficeIdAndStartAtBetween(data.office.getId(),
+		Instant.parse("2026-04-01T00:00:00Z"), Instant.parse("2026-04-01T23:59:59Z"))).hasSize(2);
+	assertThat(appointmentRepository.findByStartAtBetween(
+		Instant.parse("2026-04-01T00:00:00Z"), Instant.parse("2026-04-01T23:59:59Z"))).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("Appointment: devuelve vacio cuando no hay coincidencias")
+    void shouldReturnEmptyWhenNoFiltersMatch() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	TestData data = createBaseData(suffix);
+
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED,
+		Instant.parse("2026-04-01T10:00:00Z"), Instant.parse("2026-04-01T11:00:00Z"));
+
+	// when / then
+	assertThat(appointmentRepository.findByPatientIdAndStatus(data.patient.getId(), Status.NO_SHOW)).isEmpty();
+	assertThat(appointmentRepository.findByDoctorIdAndStartAtBetween(data.doctor.getId(),
+		Instant.parse("2026-04-02T00:00:00Z"), Instant.parse("2026-04-02T23:59:59Z"))).isEmpty();
+	assertThat(appointmentRepository.findByStartAtBetween(
+		Instant.parse("2026-04-02T00:00:00Z"), Instant.parse("2026-04-02T23:59:59Z"))).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Appointment: slots ocupados excluyen citas CANCELLED")
+    void shouldExcludeCancelledAppointmentsFromBookedSlots() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	TestData data = createBaseData(suffix);
+
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED,
+		Instant.parse("2026-04-01T10:00:00Z"), Instant.parse("2026-04-01T11:00:00Z"));
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.CANCELLED,
+		Instant.parse("2026-04-01T12:00:00Z"), Instant.parse("2026-04-01T13:00:00Z"));
+
+	// when
+	List<Appointment> bookedSlots = appointmentRepository.findBookedSlotsByDoctorAndDate(
+		data.doctor.getId(),
+		Instant.parse("2026-04-01T00:00:00Z"),
+		Instant.parse("2026-04-02T00:00:00Z"));
+
+	// then
+	assertThat(bookedSlots).hasSize(1);
+	assertThat(bookedSlots.get(0).getStatus()).isEqualTo(Status.SCHEDULED);
+    }
+
+    @Test
+    @DisplayName("Appointment: slots ocupados se ordenan por startAt asc")
+    void shouldReturnBookedSlotsOrderedByStartAt() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	TestData data = createBaseData(suffix);
+
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED,
+		Instant.parse("2026-04-01T11:00:00Z"), Instant.parse("2026-04-01T11:30:00Z"));
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED,
+		Instant.parse("2026-04-01T09:00:00Z"), Instant.parse("2026-04-01T09:30:00Z"));
+
+	// when
+	List<Appointment> bookedSlots = appointmentRepository.findBookedSlotsByDoctorAndDate(
+		data.doctor.getId(),
+		Instant.parse("2026-04-01T00:00:00Z"),
+		Instant.parse("2026-04-02T00:00:00Z"));
+
+	// then
+	assertThat(bookedSlots).hasSize(2);
+	assertThat(bookedSlots.get(0).getStartAt()).isEqualTo(Instant.parse("2026-04-01T09:00:00Z"));
+	assertThat(bookedSlots.get(1).getStartAt()).isEqualTo(Instant.parse("2026-04-01T11:00:00Z"));
+    }
+
+    @Test
+    @DisplayName("Appointment: calcula ocupacion por rango y por dia")
+    void shouldCalculateOfficeOccupancyReports() {
+	// given
+	ReportData reportData = createReportData();
+
+	// when
+	List<Object[]> officeOccupancy = appointmentRepository.findOfficeOccupancy(
+		Instant.parse("2026-04-01T00:00:00Z"),
+		Instant.parse("2026-04-30T23:59:59Z"));
+
+	// then
+	assertThat(officeOccupancy).isNotEmpty();
+	assertThat(officeOccupancy.get(0)[1]).isEqualTo(reportData.alpha.office.getCode());
+	assertThat(((Long) officeOccupancy.get(0)[2])).isEqualTo(7L);
+
+	// when
+	List<Object[]> officeDailyOccupancy = appointmentRepository.findOfficeDailyOccupancy(
+		Instant.parse("2026-04-02T00:00:00Z"),
+		Instant.parse("2026-04-02T23:59:59Z"));
+
+	// then
+	assertThat(officeDailyOccupancy).isNotEmpty();
+	assertThat(officeDailyOccupancy.get(0)[1]).isEqualTo(reportData.alpha.office.getCode());
+	assertThat(((Long) officeDailyOccupancy.get(0)[2])).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("Appointment: calcula ranking de productividad y no-show")
+    void shouldCalculateProductivityAndNoShowRankings() {
+	// given
+	ReportData reportData = createReportData();
+
+	// when
+	List<Object[]> doctorProductivity = appointmentRepository.findDoctorProductivity();
+
+	// then
+	assertThat(doctorProductivity).isNotEmpty();
+	assertThat((String) doctorProductivity.get(0)[1]).isEqualTo(reportData.alpha.doctor.getFirstName());
+	assertThat(((Long) doctorProductivity.get(0)[3])).isEqualTo(2L);
+
+	// when
+	List<Object[]> noShowPatients = appointmentRepository.findNoShowPatients(
+		Instant.parse("2026-04-01T00:00:00Z"),
+		Instant.parse("2026-04-30T23:59:59Z"));
+
+	// then
+	assertThat(noShowPatients).isNotEmpty();
+	assertThat((String) noShowPatients.get(0)[1]).isEqualTo(reportData.alpha.patient.getFirstName());
+	assertThat(((Long) noShowPatients.get(0)[3])).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("Appointment: ranking de productividad vacío cuando no hay COMPLETED")
+    void shouldReturnEmptyProductivityWhenNoCompletedAppointments() {
+	// given
+	String suffix = UUID.randomUUID().toString().substring(0, 8);
+	TestData data = createBaseData(suffix);
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.SCHEDULED,
+		Instant.parse("2026-04-01T10:00:00Z"), Instant.parse("2026-04-01T11:00:00Z"));
+	saveAppointment(data.doctor, data.patient, data.office, data.type, Status.NO_SHOW,
+		Instant.parse("2026-04-01T12:00:00Z"), Instant.parse("2026-04-01T13:00:00Z"));
+
+	// when
+	List<Object[]> doctorProductivity = appointmentRepository.findDoctorProductivity();
+
+	// then
+	assertThat(doctorProductivity).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Appointment: cuenta canceladas/no-show por especialidad y vacios fuera de rango")
+    void shouldCountCancelledAndNoShowBySpecialtyAndReturnEmptyOutsideRange() {
+	// given
+	createReportData();
+
+	// when
+	List<Object[]> cancelledNoShowBySpecialty = appointmentRepository.countCancelledAndNoShowBySpecialty(
+		Instant.parse("2026-04-01T00:00:00Z"),
+		Instant.parse("2026-04-30T23:59:59Z"));
+
+	// then
+	assertThat(cancelledNoShowBySpecialty).isNotEmpty();
+	Object[] alphaSpecialtyStats = cancelledNoShowBySpecialty.stream()
+		.filter(row -> row[1].equals("Especialidad-alpha"))
+		.findFirst()
+		.orElseThrow();
+	assertThat(((Long) alphaSpecialtyStats[2])).isEqualTo(1L);
+	assertThat(((Long) alphaSpecialtyStats[3])).isEqualTo(2L);
+
+	// when / then
+	assertThat(appointmentRepository.findOfficeOccupancy(
+		Instant.parse("2026-05-01T00:00:00Z"),
+		Instant.parse("2026-05-31T23:59:59Z"))).isEmpty();
+	assertThat(appointmentRepository.findNoShowPatients(
+		Instant.parse("2026-05-01T00:00:00Z"),
+		Instant.parse("2026-05-31T23:59:59Z"))).isEmpty();
+	assertThat(appointmentRepository.countCancelledAndNoShowBySpecialty(
+		Instant.parse("2026-05-01T00:00:00Z"),
+		Instant.parse("2026-05-31T23:59:59Z"))).isEmpty();
+    }
+
+    private ReportData createReportData() {
 	TestData alpha = createBaseData("alpha");
 	TestData beta = createBaseData("beta");
 
@@ -90,39 +284,22 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 		Instant.parse("2026-04-02T10:00:00Z"), Instant.parse("2026-04-02T11:00:00Z"));
 	saveAppointment(alpha.doctor, alpha.patient, alpha.office, alpha.type, Status.SCHEDULED,
 		Instant.parse("2026-04-03T10:00:00Z"), Instant.parse("2026-04-03T11:00:00Z"));
-
 	saveAppointment(alpha.doctor, alpha.patient, alpha.office, alpha.type, Status.COMPLETED,
 		Instant.parse("2026-04-04T10:00:00Z"), Instant.parse("2026-04-04T11:00:00Z"));
 	saveAppointment(alpha.doctor, alpha.patient, alpha.office, alpha.type, Status.COMPLETED,
 		Instant.parse("2026-04-05T10:00:00Z"), Instant.parse("2026-04-05T11:00:00Z"));
 	saveAppointment(beta.doctor, beta.patient, beta.office, beta.type, Status.COMPLETED,
 		Instant.parse("2026-04-06T10:00:00Z"), Instant.parse("2026-04-06T11:00:00Z"));
-
 	saveAppointment(alpha.doctor, alpha.patient, alpha.office, alpha.type, Status.NO_SHOW,
 		Instant.parse("2026-04-07T10:00:00Z"), Instant.parse("2026-04-07T11:00:00Z"));
 	saveAppointment(alpha.doctor, alpha.patient, alpha.office, alpha.type, Status.NO_SHOW,
 		Instant.parse("2026-04-08T10:00:00Z"), Instant.parse("2026-04-08T11:00:00Z"));
 	saveAppointment(beta.doctor, beta.patient, beta.office, beta.type, Status.NO_SHOW,
 		Instant.parse("2026-04-09T10:00:00Z"), Instant.parse("2026-04-09T11:00:00Z"));
+	saveAppointment(alpha.doctor, alpha.patient, alpha.office, alpha.type, Status.CANCELLED,
+		Instant.parse("2026-04-10T10:00:00Z"), Instant.parse("2026-04-10T11:00:00Z"));
 
-	List<Object[]> officeOccupancy = appointmentRepository.findOfficeOccupancy(
-		Instant.parse("2026-04-01T00:00:00Z"),
-		Instant.parse("2026-04-30T23:59:59Z"));
-	assertThat(officeOccupancy).isNotEmpty();
-	assertThat(officeOccupancy.get(0)[1]).isEqualTo(alpha.office.getCode());
-	assertThat(((Long) officeOccupancy.get(0)[2])).isEqualTo(7L);
-
-	List<Object[]> doctorProductivity = appointmentRepository.findDoctorProductivity();
-	assertThat(doctorProductivity).isNotEmpty();
-	assertThat((String) doctorProductivity.get(0)[1]).isEqualTo(alpha.doctor.getFirstName());
-	assertThat(((Long) doctorProductivity.get(0)[3])).isEqualTo(2L);
-
-	List<Object[]> noShowPatients = appointmentRepository.findNoShowPatients(
-		Instant.parse("2026-04-01T00:00:00Z"),
-		Instant.parse("2026-04-30T23:59:59Z"));
-	assertThat(noShowPatients).isNotEmpty();
-	assertThat((String) noShowPatients.get(0)[1]).isEqualTo(alpha.patient.getFirstName());
-	assertThat(((Long) noShowPatients.get(0)[3])).isEqualTo(2L);
+	return new ReportData(alpha, beta);
     }
 
     private Appointment saveAppointment(Doctor doctor, Patient patient, Office office, AppointmentType type, Status status,
@@ -194,4 +371,7 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 
     private record TestData(Doctor doctor, Patient patient, Office office, AppointmentType type) {
     }
+
+	private record ReportData(TestData alpha, TestData beta) {
+	}
 }

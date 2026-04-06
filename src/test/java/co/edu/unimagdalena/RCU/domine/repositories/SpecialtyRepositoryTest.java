@@ -14,8 +14,9 @@ class SpecialtyRepositoryTest extends AbstractRepositoryIT {
 	SpecialtyRepository specialtyRepository;
 
 	@Test
-	@DisplayName("Specialty: existe por nombre")
-	void shouldCheckExistsByName() {
+	@DisplayName("Specialty: existsByName retorna true cuando el nombre existe")
+	void shouldFindSpecialtyByNameWhenExists() {
+		// given
 		Specialty specialty = Specialty.builder()
 				.name("Cardiologia")
 				.description("Especialidad del corazon")
@@ -24,10 +25,20 @@ class SpecialtyRepositoryTest extends AbstractRepositoryIT {
 				.build();
 		specialtyRepository.save(specialty);
 
+		// when
 		boolean exists = specialtyRepository.existsByName("Cardiologia");
+
+		// then
+		assertThat(exists).isTrue();
+	}
+
+	@Test
+	@DisplayName("Specialty: existsByName retorna false cuando el nombre no existe")
+	void shouldNotFindSpecialtyByNameWhenMissing() {
+		// when
 		boolean notExists = specialtyRepository.existsByName("Neurologia");
 
-		assertThat(exists).isTrue();
+		// then
 		assertThat(notExists).isFalse();
 	}
 }
