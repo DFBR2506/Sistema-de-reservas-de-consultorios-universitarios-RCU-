@@ -25,6 +25,7 @@ public interface DoctorMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = org.mapstruct.NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "specialty", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "appointments", ignore = true)
     @Mapping(target = "schedules", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

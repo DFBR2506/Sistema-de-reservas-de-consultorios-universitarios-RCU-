@@ -2,6 +2,7 @@ package co.edu.unimagdalena.RCU.services.implementation;
 
 import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.CreateDoctorScheduleRequest;
 import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.DoctorScheduleResponse;
+import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.*;
 import co.edu.unimagdalena.RCU.domine.entities.Doctor;
 import co.edu.unimagdalena.RCU.domine.entities.DoctorSchedule;
 import co.edu.unimagdalena.RCU.domine.repositories.DoctorRepository;
