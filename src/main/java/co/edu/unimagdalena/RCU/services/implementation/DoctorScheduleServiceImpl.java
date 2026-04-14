@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.services.implementations;
+package co.edu.unimagdalena.RCU.services.implementation;
 
 import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.*;
 import co.edu.unimagdalena.RCU.domine.entities.Doctor;
@@ -9,13 +9,14 @@ import co.edu.unimagdalena.RCU.exceptions.BusinessException;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
 import co.edu.unimagdalena.RCU.services.DoctorScheduleService;
-import co.edu.unimagdalena.RCU.services.mappers.DoctorScheduleMapper;
+import co.edu.unimagdalena.RCU.services.mapper.DoctorScheduleMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -59,15 +60,14 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<DoctorScheduleResponse> getAllSchedules(UUID doctorId) {
+    public Page<DoctorScheduleResponse> getAllSchedules(UUID doctorId, Pageable pageable) {
         requireNonNull(doctorId, "The doctor id cannot be null");
+        requireNonNull(pageable, "The pageable cannot be null");
         if (!doctorRepository.existsById(doctorId)) {
             throw new ResourceNotFoundException("Doctor with id '" + doctorId + "' not found");
         }
-        return doctorScheduleRepository.findByDoctorId(doctorId)
-                .stream()
-                .map(doctorScheduleMapper::toResponse)
-                .toList();
+        return doctorScheduleRepository.findByDoctorId(doctorId, pageable)
+                .map(doctorScheduleMapper::toResponse);
     }
 
     private static void requireNonNull(Object obj, String message) {

@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.services.implementations;
+package co.edu.unimagdalena.RCU.services.implementation;
 
 import co.edu.unimagdalena.RCU.api.dto.AppointmentDtos.*;
 import co.edu.unimagdalena.RCU.domine.entities.*;
@@ -7,15 +7,16 @@ import co.edu.unimagdalena.RCU.domine.entities.enums.Status;
 import co.edu.unimagdalena.RCU.domine.repositories.*;
 import co.edu.unimagdalena.RCU.exceptions.*;
 import co.edu.unimagdalena.RCU.services.AppointmentService;
-import co.edu.unimagdalena.RCU.services.mappers.AppointmentMapper;
+import co.edu.unimagdalena.RCU.services.mapper.AppointmentMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -114,11 +115,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<AppointmentResponse> getAll() {
-        return appointmentRepository.findAll()
-                .stream()
-                .map(appointmentMapper::toResponse)
-                .toList();
+    public Page<AppointmentResponse> getAll(Pageable pageable) {
+        requireNonNull(pageable, "The pageable cannot be null");
+        return appointmentRepository.findAll(pageable)
+                .map(appointmentMapper::toResponse);
     }
 
     @Override

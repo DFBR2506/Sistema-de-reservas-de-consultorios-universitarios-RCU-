@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.services.mappers;
+package co.edu.unimagdalena.RCU.services.mapper;
 
 import org.mapstruct.*;
 

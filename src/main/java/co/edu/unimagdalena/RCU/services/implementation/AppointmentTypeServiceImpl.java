@@ -1,17 +1,18 @@
-package co.edu.unimagdalena.RCU.services.implementations;
+package co.edu.unimagdalena.RCU.services.implementation;
 
 import co.edu.unimagdalena.RCU.api.dto.AppointmentTypeDtos.*;
 import co.edu.unimagdalena.RCU.domine.entities.AppointmentType;
 import co.edu.unimagdalena.RCU.domine.repositories.AppointmentTypeRepository;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.services.AppointmentTypeService;
-import co.edu.unimagdalena.RCU.services.mappers.AppointmentTypeMapper;
+import co.edu.unimagdalena.RCU.services.mapper.AppointmentTypeMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -41,11 +42,10 @@ public class AppointmentTypeServiceImpl implements AppointmentTypeService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<AppointmentTypeResponse> getAll() {
-        return appointmentTypeRepository.findAll()
-                .stream()
-                .map(appointmentTypeMapper::toResponse)
-                .toList();
+    public Page<AppointmentTypeResponse> getAll(Pageable pageable) {
+        requireNonNull(pageable, "The pageable cannot be null");
+        return appointmentTypeRepository.findAll(pageable)
+                .map(appointmentTypeMapper::toResponse);
     }
 
     private static void requireNonNull(Object obj, String message) {

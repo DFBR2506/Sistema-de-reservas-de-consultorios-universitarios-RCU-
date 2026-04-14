@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.services.implementations;
+package co.edu.unimagdalena.RCU.services.implementation;
 
 import co.edu.unimagdalena.RCU.api.dto.AvailabilityDtos.*;
 import co.edu.unimagdalena.RCU.domine.entities.DoctorSchedule;

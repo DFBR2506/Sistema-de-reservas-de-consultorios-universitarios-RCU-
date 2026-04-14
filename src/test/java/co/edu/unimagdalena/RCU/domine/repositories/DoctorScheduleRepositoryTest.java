@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import co.edu.unimagdalena.RCU.domine.entities.Doctor;
 import co.edu.unimagdalena.RCU.domine.entities.DoctorSchedule;
 import co.edu.unimagdalena.RCU.domine.entities.Specialty;
@@ -65,7 +66,7 @@ class DoctorScheduleRepositoryTest extends AbstractRepositoryIT {
 	doctorScheduleRepository.save(createSchedule(doctor, DayOfWeek.TUESDAY, LocalTime.of(13, 0), LocalTime.of(17, 0)));
 
 	// when
-	var schedules = doctorScheduleRepository.findByDoctorId(doctor.getId());
+	var schedules = doctorScheduleRepository.findByDoctorId(doctor.getId(), Pageable.unpaged()).getContent();
 
 	// then
 	assertThat(schedules).hasSize(2);
@@ -81,7 +82,7 @@ class DoctorScheduleRepositoryTest extends AbstractRepositoryIT {
 	Doctor doctor = createDoctor("sofia." + suffix + "@demo.com", "DOCSCH4-" + suffix, "LICSCH4-" + suffix);
 
 	// when
-	var schedules = doctorScheduleRepository.findByDoctorId(doctor.getId());
+	var schedules = doctorScheduleRepository.findByDoctorId(doctor.getId(), Pageable.unpaged()).getContent();
 
 	// then
 	assertThat(schedules).isEmpty();

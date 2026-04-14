@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import co.edu.unimagdalena.RCU.domine.entities.Appointment;
 import co.edu.unimagdalena.RCU.domine.entities.AppointmentType;
 import co.edu.unimagdalena.RCU.domine.entities.Doctor;
@@ -183,7 +184,8 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 	// when
 	List<Object[]> officeOccupancy = appointmentRepository.findOfficeOccupancy(
 		Instant.parse("2026-04-01T00:00:00Z"),
-		Instant.parse("2026-04-30T23:59:59Z"));
+		Instant.parse("2026-04-30T23:59:59Z"),
+		Pageable.unpaged()).getContent();
 
 	// then
 	assertThat(officeOccupancy).isNotEmpty();
@@ -208,7 +210,7 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 	ReportData reportData = createReportData();
 
 	// when
-	List<Object[]> doctorProductivity = appointmentRepository.findDoctorProductivity();
+	List<Object[]> doctorProductivity = appointmentRepository.findDoctorProductivity(Pageable.unpaged()).getContent();
 
 	// then
 	assertThat(doctorProductivity).isNotEmpty();
@@ -218,7 +220,8 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 	// when
 	List<Object[]> noShowPatients = appointmentRepository.findNoShowPatients(
 		Instant.parse("2026-04-01T00:00:00Z"),
-		Instant.parse("2026-04-30T23:59:59Z"));
+		Instant.parse("2026-04-30T23:59:59Z"),
+		Pageable.unpaged()).getContent();
 
 	// then
 	assertThat(noShowPatients).isNotEmpty();
@@ -238,7 +241,7 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 		Instant.parse("2026-04-01T12:00:00Z"), Instant.parse("2026-04-01T13:00:00Z"));
 
 	// when
-	List<Object[]> doctorProductivity = appointmentRepository.findDoctorProductivity();
+	List<Object[]> doctorProductivity = appointmentRepository.findDoctorProductivity(Pageable.unpaged()).getContent();
 
 	// then
 	assertThat(doctorProductivity).isEmpty();
@@ -267,10 +270,12 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 	// when / then
 	assertThat(appointmentRepository.findOfficeOccupancy(
 		Instant.parse("2026-05-01T00:00:00Z"),
-		Instant.parse("2026-05-31T23:59:59Z"))).isEmpty();
+		Instant.parse("2026-05-31T23:59:59Z"),
+		Pageable.unpaged()).getContent()).isEmpty();
 	assertThat(appointmentRepository.findNoShowPatients(
 		Instant.parse("2026-05-01T00:00:00Z"),
-		Instant.parse("2026-05-31T23:59:59Z"))).isEmpty();
+		Instant.parse("2026-05-31T23:59:59Z"),
+		Pageable.unpaged()).getContent()).isEmpty();
 	assertThat(appointmentRepository.countCancelledAndNoShowBySpecialty(
 		Instant.parse("2026-05-01T00:00:00Z"),
 		Instant.parse("2026-05-31T23:59:59Z"))).isEmpty();

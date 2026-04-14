@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import co.edu.unimagdalena.RCU.domine.entities.Doctor;
 import co.edu.unimagdalena.RCU.domine.entities.Specialty;
 import co.edu.unimagdalena.RCU.domine.entities.enums.DocumentType;
@@ -54,7 +55,8 @@ class DoctorRepositoryTest extends AbstractRepositoryIT {
 				"LIC-OTHER-" + suffix, true, otherSpecialty);
 
 		// when
-		List<Doctor> activeBySpecialty = doctorRepository.findBySpecialtyIdAndActiveTrue(specialty.getId());
+		List<Doctor> activeBySpecialty = doctorRepository.findBySpecialtyIdAndActiveTrue(specialty.getId(), Pageable.unpaged())
+				.getContent();
 
 		// then
 		assertThat(activeBySpecialty).hasSize(1);
@@ -71,7 +73,8 @@ class DoctorRepositoryTest extends AbstractRepositoryIT {
 				"LIC-NONE-" + suffix, false, specialty);
 
 		// when
-		List<Doctor> activeBySpecialty = doctorRepository.findBySpecialtyIdAndActiveTrue(specialty.getId());
+		List<Doctor> activeBySpecialty = doctorRepository.findBySpecialtyIdAndActiveTrue(specialty.getId(), Pageable.unpaged())
+				.getContent();
 
 		// then
 		assertThat(activeBySpecialty).isEmpty();
