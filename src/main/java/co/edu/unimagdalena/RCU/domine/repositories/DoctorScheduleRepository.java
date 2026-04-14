@@ -1,14 +1,14 @@
-package co.edu.unimagdalena.RCU.repository;
+package co.edu.unimagdalena.RCU.domine.repositories;
 
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import co.edu.unimagdalena.RCU.entities.enums.DayOfWeek;
- 
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import co.edu.unimagdalena.RCU.entities.DoctorSchedule;
+import co.edu.unimagdalena.RCU.domine.entities.DoctorSchedule;
+import co.edu.unimagdalena.RCU.domine.entities.enums.DayOfWeek;
 
 public interface DoctorScheduleRepository extends JpaRepository<DoctorSchedule, UUID> {
     // aca van los query, pero tengo que implementar algunos para las validaciones del service

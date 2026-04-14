@@ -1,8 +1,9 @@
-package co.edu.unimagdalena.RCU.repository;
+package co.edu.unimagdalena.RCU.domine.repositories;
 
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
-import co.edu.unimagdalena.RCU.entities.Office;
+
+import co.edu.unimagdalena.RCU.domine.entities.Office;
 
 public interface OfficeRepository extends JpaRepository<Office, UUID> {
     // aca van los query, pero tengo que implementar algunos para las validaciones del service
