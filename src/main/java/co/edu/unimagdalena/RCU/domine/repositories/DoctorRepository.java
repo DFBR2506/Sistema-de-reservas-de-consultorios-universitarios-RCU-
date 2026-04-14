@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import co.edu.unimagdalena.RCU.domine.entities.Doctor;
 
 public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
+    // aca van los query, pero tengo que implementar algunos para las validaciones del service
     // Busca doctores activos por especialidad (MINIMO).
     Page<Doctor> findBySpecialtyIdAndActiveTrue(UUID specialtyId, Pageable pageable);
 

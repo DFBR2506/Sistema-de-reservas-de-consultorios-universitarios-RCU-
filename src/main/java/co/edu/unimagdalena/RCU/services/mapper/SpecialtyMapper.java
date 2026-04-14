@@ -1,5 +1,6 @@
 package co.edu.unimagdalena.RCU.services.mapper;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,6 +12,7 @@ public interface SpecialtyMapper {
 
     SpecialtyResponse toResponse(Specialty specialty);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = org.mapstruct.NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "doctors", ignore = true)

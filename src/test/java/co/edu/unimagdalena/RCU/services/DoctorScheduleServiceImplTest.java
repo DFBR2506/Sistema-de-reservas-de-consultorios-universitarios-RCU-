@@ -1,0 +1,161 @@
+package co.edu.unimagdalena.RCU.services;
+
+import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.*;
+import co.edu.unimagdalena.RCU.domine.entities.Doctor;
+import co.edu.unimagdalena.RCU.domine.entities.DoctorSchedule;
+import co.edu.unimagdalena.RCU.domine.entities.enums.DayOfWeek;
+import co.edu.unimagdalena.RCU.domine.repositories.DoctorRepository;
+import co.edu.unimagdalena.RCU.domine.repositories.DoctorScheduleRepository;
+import co.edu.unimagdalena.RCU.exceptions.BusinessException;
+import co.edu.unimagdalena.RCU.exceptions.ConflictException;
+import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
+import co.edu.unimagdalena.RCU.services.implementation.DoctorScheduleServiceImpl;
+import co.edu.unimagdalena.RCU.services.mapper.DoctorScheduleMapper;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class DoctorScheduleServiceImplTest {
+
+    @Mock
+    private DoctorScheduleRepository doctorScheduleRepository;
+
+    @Mock
+    private DoctorRepository doctorRepository;
+
+    @Spy
+    private DoctorScheduleMapper doctorScheduleMapper = Mappers.getMapper(DoctorScheduleMapper.class);
+
+    @InjectMocks
+    private DoctorScheduleServiceImpl doctorScheduleService;
+
+    @Test
+    void shouldCreateDoctorScheduleSuccessfully() {
+        // Given
+        var doctorId = UUID.randomUUID();
+        var request = new CreateDoctorScheduleRequest(DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(12, 0));
+        var doctor = Doctor.builder().id(doctorId).active(true).build();
+        
+        when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
+        when(doctorScheduleRepository.existsByDoctorIdAndDayOfWeek(doctorId, DayOfWeek.MONDAY)).thenReturn(false);
+        when(doctorScheduleRepository.save(any())).thenAnswer(inv -> {
+            DoctorSchedule ds = inv.getArgument(0);
+            ds.setId(UUID.randomUUID());
+            return ds;
+        });
+
+        // When
+        var result = doctorScheduleService.create(doctorId, request);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.dayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
+        assertThat(result.startTime()).isEqualTo(LocalTime.of(8, 0));
+        verify(doctorScheduleRepository).save(any());
+    }
+
+    @Test
+    void shouldThrowWhenDoctorNotFound() {
+        // Given
+        var doctorId = UUID.randomUUID();
+        var request = new CreateDoctorScheduleRequest(DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(12, 0));
+        when(doctorRepository.findById(doctorId)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(ResourceNotFoundException.class, () -> doctorScheduleService.create(doctorId, request));
+        verify(doctorScheduleRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowWhenDoctorNotActive() {
+        // Given
+        var doctorId = UUID.randomUUID();
+        var request = new CreateDoctorScheduleRequest(DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(12, 0));
+        var doctor = Doctor.builder().id(doctorId).active(false).build();
+        when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
+
+        // When / Then
+        assertThrows(BusinessException.class, () -> doctorScheduleService.create(doctorId, request));
+        verify(doctorScheduleRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowWhenStartTimeAfterEndTime() {
+        // Given
+        var doctorId = UUID.randomUUID();
+        var request = new CreateDoctorScheduleRequest(DayOfWeek.MONDAY, LocalTime.of(16, 0), LocalTime.of(12, 0));
+       
+
+        // When / Then
+        assertThrows(BusinessException.class, () -> doctorScheduleService.create(doctorId, request));
+        verify(doctorScheduleRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowWhenScheduleAlreadyExistsForDay() {
+        // Given
+        var doctorId = UUID.randomUUID();
+        var request = new CreateDoctorScheduleRequest(DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(12, 0));
+        var doctor = Doctor.builder().id(doctorId).active(true).build();
+        
+        when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
+        when(doctorScheduleRepository.existsByDoctorIdAndDayOfWeek(doctorId, DayOfWeek.MONDAY)).thenReturn(true);
+
+        // When / Then
+        assertThrows(ConflictException.class, () -> doctorScheduleService.create(doctorId, request));
+        verify(doctorScheduleRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldGetAllSchedulesForDoctor() {
+        // Given
+        var doctorId = UUID.randomUUID();
+        var schedule = DoctorSchedule.builder()
+            .id(UUID.randomUUID())
+            .dayOfWeek(DayOfWeek.MONDAY)
+            .startTime(LocalTime.of(8, 0))
+            .endTime(LocalTime.of(12, 0))
+            .active(true)
+            .build();
+        var pageable = Pageable.ofSize(10);
+        when(doctorRepository.existsById(doctorId)).thenReturn(true);
+        when(doctorScheduleRepository.findByDoctorId(doctorId, pageable))
+                .thenReturn(new PageImpl<>(List.of(schedule), pageable, 1));
+
+        // When
+        var result = doctorScheduleService.getAllSchedules(doctorId, pageable);
+
+        // Then
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).dayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
+    }
+
+    @Test
+    void shouldThrowWhenDoctorNotFoundForGetSchedules() {
+        // Given
+        var doctorId = UUID.randomUUID();
+        when(doctorRepository.existsById(doctorId)).thenReturn(false);
+        var pageable = Pageable.ofSize(10);
+
+        // When / Then
+        assertThrows(ResourceNotFoundException.class, () -> doctorScheduleService.getAllSchedules(doctorId, pageable));
+    }
+}
