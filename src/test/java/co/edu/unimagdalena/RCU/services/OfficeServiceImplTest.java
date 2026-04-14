@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -85,14 +87,15 @@ class OfficeServiceImplTest {
             .floor(3)
             .active(true)
             .build();
-        when(officeRepository.findAll()).thenReturn(List.of(office));
+        var pageable = Pageable.ofSize(10);
+        when(officeRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(office), pageable, 1));
 
         // When
-        var result = officeService.getAll();
+        var result = officeService.getAll(pageable);
 
         // Then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).code()).isEqualTo("CON-101");
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).code()).isEqualTo("CON-101");
     }
 
     @Test

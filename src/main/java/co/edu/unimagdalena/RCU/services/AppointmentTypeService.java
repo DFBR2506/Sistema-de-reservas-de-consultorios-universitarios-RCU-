@@ -1,11 +1,11 @@
-package co.edu.unimagdalena.RCU.service;
-
-import java.util.List;
+package co.edu.unimagdalena.RCU.services;
 
 import co.edu.unimagdalena.RCU.api.dto.AppointmentTypeDtos.AppointmentTypeResponse;
 import co.edu.unimagdalena.RCU.api.dto.AppointmentTypeDtos.CreateAppointmentTypeRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface AppointmentTypeService {
     AppointmentTypeResponse create(CreateAppointmentTypeRequest request);
-    List<AppointmentTypeResponse> getAll();
+    Page<AppointmentTypeResponse> getAll(Pageable pageable);
 }

@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -94,13 +96,14 @@ class AppointmentTypeServiceImplTest {
             .durationMinutes(30)
             .active(true)
             .build();
-        when(appointmentTypeRepository.findAll()).thenReturn(List.of(appointmentType));
+        var pageable = Pageable.ofSize(10);
+        when(appointmentTypeRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(appointmentType), pageable, 1));
 
         // When
-        var result = appointmentTypeService.getAll();
+        var result = appointmentTypeService.getAll(pageable);
 
         // Then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).name()).isEqualTo("Consultation");
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).name()).isEqualTo("Consultation");
     }
 }

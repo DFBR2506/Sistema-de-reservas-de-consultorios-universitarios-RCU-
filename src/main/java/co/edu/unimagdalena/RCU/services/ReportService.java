@@ -1,11 +1,12 @@
-package co.edu.unimagdalena.RCU.service;
+package co.edu.unimagdalena.RCU.services;
 
 import co.edu.unimagdalena.RCU.api.dto.ReportDtos.*;
 import java.time.Instant;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ReportService {
-    List<OfficeOccupancyResponse> getOfficeOccupancy(Instant startDate, Instant endDate);
-    List<DoctorProductivityResponse> getDoctorProductivity();
-    List<NoShowPatientResponse> getNoShowPatients(Instant startDate, Instant endDate);
+    Page<OfficeOccupancyResponse> getOfficeOccupancy(Instant startDate, Instant endDate, Pageable pageable);
+    Page<DoctorProductivityResponse> getDoctorProductivity(Pageable pageable);
+    Page<NoShowPatientResponse> getNoShowPatients(Instant startDate, Instant endDate, Pageable pageable);
 }

@@ -1,14 +1,14 @@
-package co.edu.unimagdalena.RCU.service;
+package co.edu.unimagdalena.RCU.services;
 
 import co.edu.unimagdalena.RCU.api.dto.AppointmentDtos.*;
-import co.edu.unimagdalena.RCU.entities.*;
-import co.edu.unimagdalena.RCU.entities.enums.Status;
+import co.edu.unimagdalena.RCU.domine.entities.*;
+import co.edu.unimagdalena.RCU.domine.entities.enums.Status;
+import co.edu.unimagdalena.RCU.domine.repositories.*;
 import co.edu.unimagdalena.RCU.exceptions.BusinessException;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.mapper.AppointmentMapper;
-import co.edu.unimagdalena.RCU.repository.*;
-import co.edu.unimagdalena.RCU.service.implementation.AppointmentServiceImpl;
+import co.edu.unimagdalena.RCU.services.implementation.AppointmentServiceImpl;
+import co.edu.unimagdalena.RCU.services.mapper.AppointmentMapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -58,7 +60,7 @@ class AppointmentServiceImplTest {
     }
 
     private DoctorSchedule scheduleForDate(Instant startAt) {
-        var dayOfWeek = co.edu.unimagdalena.RCU.entities.enums.DayOfWeek.valueOf(
+        var dayOfWeek = co.edu.unimagdalena.RCU.domine.entities.enums.DayOfWeek.valueOf(
                 startAt.atZone(ZoneOffset.UTC).getDayOfWeek().name()
         );
         return DoctorSchedule.builder()
@@ -202,14 +204,15 @@ class AppointmentServiceImplTest {
                 .startAt(futureStartAt())
                 .endAt(futureStartAt().plusSeconds(1800))
                 .build();
-        when(appointmentRepository.findAll()).thenReturn(List.of(appointment));
+        var pageable = Pageable.ofSize(10);
+        when(appointmentRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(appointment), pageable, 1));
 
         // When
-        var result = appointmentService.getAll();
+        var result = appointmentService.getAll(pageable);
 
         // Then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).status()).isEqualTo(Status.SCHEDULED);
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).status()).isEqualTo(Status.SCHEDULED);
     }
 
     @Test

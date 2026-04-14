@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -117,13 +119,14 @@ class SpecialtyServiceImplTest {
                 .description("Heart specialist")
                 .active(true)
                 .build();
-        when(specialtyRepository.findAll()).thenReturn(List.of(specialty));
+        var pageable = Pageable.ofSize(10);
+        when(specialtyRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(specialty), pageable, 1));
 
         // When
-        var result = specialtyService.getAll();
+        var result = specialtyService.getAll(pageable);
 
         // Then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).name()).isEqualTo("Cardiology");
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).name()).isEqualTo("Cardiology");
     }
 }

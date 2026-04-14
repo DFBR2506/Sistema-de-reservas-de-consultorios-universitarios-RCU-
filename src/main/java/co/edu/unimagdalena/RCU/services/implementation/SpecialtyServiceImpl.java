@@ -1,18 +1,19 @@
-package co.edu.unimagdalena.RCU.service.implementation;
+package co.edu.unimagdalena.RCU.services.implementation;
 
-import co.edu.unimagdalena.RCU.service.SpecialtyService;
 import co.edu.unimagdalena.RCU.api.dto.SpecialtyDtos.*;
-import co.edu.unimagdalena.RCU.entities.Specialty;
+import co.edu.unimagdalena.RCU.domine.entities.Specialty;
+import co.edu.unimagdalena.RCU.domine.repositories.SpecialtyRepository;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.mapper.SpecialtyMapper;
-import co.edu.unimagdalena.RCU.repository.SpecialtyRepository;
+import co.edu.unimagdalena.RCU.services.SpecialtyService;
+import co.edu.unimagdalena.RCU.services.mapper.SpecialtyMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -48,11 +49,10 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<SpecialtyResponse> getAll() {
-        return specialtyRepository.findAll()
-            .stream()
-            .map(specialtyMapper::toResponse)
-            .toList();
+    public Page<SpecialtyResponse> getAll(Pageable pageable) {
+        requireNonNull(pageable, "The pageable cannot be null");
+        return specialtyRepository.findAll(pageable)
+            .map(specialtyMapper::toResponse);
     }
 
     private static void requireNonNull(Object obj, String message) {

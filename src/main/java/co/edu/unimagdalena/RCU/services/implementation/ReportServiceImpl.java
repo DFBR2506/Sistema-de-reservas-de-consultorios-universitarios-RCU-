@@ -1,14 +1,15 @@
-package co.edu.unimagdalena.RCU.service.implementation;
+package co.edu.unimagdalena.RCU.services.implementation;
 
 import co.edu.unimagdalena.RCU.api.dto.ReportDtos.*;
-import co.edu.unimagdalena.RCU.repository.AppointmentRepository;
-import co.edu.unimagdalena.RCU.service.ReportService;
+import co.edu.unimagdalena.RCU.domine.repositories.AppointmentRepository;
+import co.edu.unimagdalena.RCU.services.ReportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -20,51 +21,48 @@ public class ReportServiceImpl implements ReportService {
     private final AppointmentRepository appointmentRepository;
 
     @Override
-    public List<OfficeOccupancyResponse> getOfficeOccupancy(Instant startDate, Instant endDate) {
+        public Page<OfficeOccupancyResponse> getOfficeOccupancy(Instant startDate, Instant endDate, Pageable pageable) {
         requireNonNull(startDate, "The start date cannot be null");
         requireNonNull(endDate, "The end date cannot be null");
+        requireNonNull(pageable, "The pageable cannot be null");
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date must be before end date");
         }
-        return appointmentRepository.findOfficeOccupancy(startDate, endDate)
-                .stream()
-                .map(row -> new OfficeOccupancyResponse(
+        return appointmentRepository.findOfficeOccupancy(startDate, endDate, pageable)
+            .map(row -> new OfficeOccupancyResponse(
                         (UUID) row[0],
                         (String) row[1],
                         (Long) row[2]
-                ))
-                .toList();
+            ));
     }
 
     @Override
-    public List<DoctorProductivityResponse> getDoctorProductivity() {
-        return appointmentRepository.findDoctorProductivity()
-                .stream()
-                .map(row -> new DoctorProductivityResponse(
+        public Page<DoctorProductivityResponse> getDoctorProductivity(Pageable pageable) {
+        requireNonNull(pageable, "The pageable cannot be null");
+        return appointmentRepository.findDoctorProductivity(pageable)
+            .map(row -> new DoctorProductivityResponse(
                         (UUID) row[0],
                         (String) row[1],
                         (String) row[2],
                         (Long) row[3]
-                ))
-                .toList();
+            ));
     }
 
     @Override
-    public List<NoShowPatientResponse> getNoShowPatients(Instant startDate, Instant endDate) {
+        public Page<NoShowPatientResponse> getNoShowPatients(Instant startDate, Instant endDate, Pageable pageable) {
         requireNonNull(startDate, "The start date cannot be null");
         requireNonNull(endDate, "The end date cannot be null");
+        requireNonNull(pageable, "The pageable cannot be null");
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date must be before end date");
         }
-        return appointmentRepository.findNoShowPatients(startDate, endDate)
-                .stream()
-                .map(row -> new NoShowPatientResponse(
+        return appointmentRepository.findNoShowPatients(startDate, endDate, pageable)
+            .map(row -> new NoShowPatientResponse(
                         (UUID) row[0],
                         (String) row[1],
                         (String) row[2],
                         (Long) row[3]
-                ))
-                .toList();
+            ));
     }
 
     private static void requireNonNull(Object obj, String message) {

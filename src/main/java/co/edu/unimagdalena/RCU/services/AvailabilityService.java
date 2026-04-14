@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.service;
+package co.edu.unimagdalena.RCU.services;
 
 import java.time.LocalDate;
 import java.util.List;

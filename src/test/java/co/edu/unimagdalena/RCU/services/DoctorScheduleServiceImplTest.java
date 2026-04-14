@@ -19,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -133,15 +135,17 @@ class DoctorScheduleServiceImplTest {
             .endTime(LocalTime.of(12, 0))
             .active(true)
             .build();
+        var pageable = Pageable.ofSize(10);
         when(doctorRepository.existsById(doctorId)).thenReturn(true);
-        when(doctorScheduleRepository.findByDoctorId(doctorId)).thenReturn(List.of(schedule));
+        when(doctorScheduleRepository.findByDoctorId(doctorId, pageable))
+                .thenReturn(new PageImpl<>(List.of(schedule), pageable, 1));
 
         // When
-        var result = doctorScheduleService.getAllSchedules(doctorId);
+        var result = doctorScheduleService.getAllSchedules(doctorId, pageable);
 
         // Then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).dayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).dayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
     }
 
     @Test
@@ -149,8 +153,9 @@ class DoctorScheduleServiceImplTest {
         // Given
         var doctorId = UUID.randomUUID();
         when(doctorRepository.existsById(doctorId)).thenReturn(false);
+        var pageable = Pageable.ofSize(10);
 
         // When / Then
-        assertThrows(ResourceNotFoundException.class, () -> doctorScheduleService.getAllSchedules(doctorId));
+        assertThrows(ResourceNotFoundException.class, () -> doctorScheduleService.getAllSchedules(doctorId, pageable));
     }
 }

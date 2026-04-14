@@ -1,13 +1,13 @@
-package co.edu.unimagdalena.RCU.service.implementation;
+package co.edu.unimagdalena.RCU.services.implementation;
 
 import co.edu.unimagdalena.RCU.api.dto.AvailabilityDtos.*;
-import co.edu.unimagdalena.RCU.entities.DoctorSchedule;
-import co.edu.unimagdalena.RCU.entities.enums.DayOfWeek;
+import co.edu.unimagdalena.RCU.domine.entities.DoctorSchedule;
+import co.edu.unimagdalena.RCU.domine.entities.enums.DayOfWeek;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.repository.AppointmentRepository;
-import co.edu.unimagdalena.RCU.repository.DoctorRepository;
-import co.edu.unimagdalena.RCU.repository.DoctorScheduleRepository;
-import co.edu.unimagdalena.RCU.service.AvailabilityService;
+import co.edu.unimagdalena.RCU.domine.repositories.AppointmentRepository;
+import co.edu.unimagdalena.RCU.domine.repositories.DoctorRepository;
+import co.edu.unimagdalena.RCU.domine.repositories.DoctorScheduleRepository;
+import co.edu.unimagdalena.RCU.services.AvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

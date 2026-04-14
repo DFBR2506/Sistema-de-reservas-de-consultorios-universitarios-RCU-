@@ -20,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -160,13 +162,14 @@ class DoctorServiceImplTest {
             .specialty(specialty)
             .active(true)
             .build();
-        when(doctorRepository.findAll()).thenReturn(List.of(doctor));
+        var pageable = Pageable.ofSize(10);
+        when(doctorRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(doctor), pageable, 1));
 
         // When
-        var result = doctorService.getAllDoctors();
+        var result = doctorService.getAllDoctors(pageable);
 
         // Then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).firstName()).isEqualTo("Carlos");
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).firstName()).isEqualTo("Carlos");
     }
 }

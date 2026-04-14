@@ -1,10 +1,10 @@
-package co.edu.unimagdalena.RCU.mapper;
+package co.edu.unimagdalena.RCU.services.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import co.edu.unimagdalena.RCU.entities.*;
 import co.edu.unimagdalena.RCU.api.dto.AppointmentTypeDtos.*;
+import co.edu.unimagdalena.RCU.domine.entities.*;
 
 @Mapper(componentModel = "spring")
 public interface AppointmentTypeMapper {

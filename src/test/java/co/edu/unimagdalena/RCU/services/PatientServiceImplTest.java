@@ -17,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -145,14 +147,15 @@ class PatientServiceImplTest {
             .documentNumber("1082898231")
             .active(true)
             .build();
-        when(patientRepository.findAll()).thenReturn(List.of(patient));
+        var pageable = Pageable.ofSize(10);
+        when(patientRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(patient), pageable, 1));
 
         // When
-        var result = patientService.getAll();
+        var result = patientService.getAll(pageable);
 
         // Then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).firstName()).isEqualTo("Jairo");
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).firstName()).isEqualTo("Jairo");
     }
 
     @Test

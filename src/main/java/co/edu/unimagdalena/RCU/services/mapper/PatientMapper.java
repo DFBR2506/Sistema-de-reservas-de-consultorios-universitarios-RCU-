@@ -1,11 +1,11 @@
-package co.edu.unimagdalena.RCU.mapper;
+package co.edu.unimagdalena.RCU.services.mapper;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import co.edu.unimagdalena.RCU.entities.*;
 import co.edu.unimagdalena.RCU.api.dto.PatientDtos.*;
+import co.edu.unimagdalena.RCU.domine.entities.*;
 
 @Mapper(componentModel = "spring")
 public interface PatientMapper {

@@ -1,18 +1,19 @@
-package co.edu.unimagdalena.RCU.service.implementation;
+package co.edu.unimagdalena.RCU.services.implementation;
 
 import co.edu.unimagdalena.RCU.api.dto.OfficeDtos.*;
-import co.edu.unimagdalena.RCU.entities.Office;
+import co.edu.unimagdalena.RCU.domine.entities.Office;
+import co.edu.unimagdalena.RCU.domine.repositories.OfficeRepository;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.mapper.OfficeMapper;
-import co.edu.unimagdalena.RCU.repository.OfficeRepository;
-import co.edu.unimagdalena.RCU.service.OfficeService;
+import co.edu.unimagdalena.RCU.services.OfficeService;
+import co.edu.unimagdalena.RCU.services.mapper.OfficeMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -40,11 +41,10 @@ public class OfficeServiceImpl implements OfficeService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<OfficeResponse> getAll() {
-        return officeRepository.findAll()
-                .stream()
-                .map(officeMapper::toResponse)
-                .toList();
+    public Page<OfficeResponse> getAll(Pageable pageable) {
+        requireNonNull(pageable, "The pageable cannot be null");
+        return officeRepository.findAll(pageable)
+                .map(officeMapper::toResponse);
     }
 
     @Override
