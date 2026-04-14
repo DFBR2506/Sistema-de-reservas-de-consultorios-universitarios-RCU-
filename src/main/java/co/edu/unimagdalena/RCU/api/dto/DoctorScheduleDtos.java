@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.UUID;
 
-import co.edu.unimagdalena.RCU.entities.enums.DayOfWeek;
+import co.edu.unimagdalena.RCU.domine.entities.enums.DayOfWeek;
 
 public class DoctorScheduleDtos {
     public record CreateDoctorScheduleRequest(
