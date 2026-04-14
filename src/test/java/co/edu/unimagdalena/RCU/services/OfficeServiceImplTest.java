@@ -1,12 +1,12 @@
-package co.edu.unimagdalena.RCU.service;
+package co.edu.unimagdalena.RCU.services;
 
 import co.edu.unimagdalena.RCU.api.dto.OfficeDtos.*;
-import co.edu.unimagdalena.RCU.entities.Office;
+import co.edu.unimagdalena.RCU.domine.entities.Office;
+import co.edu.unimagdalena.RCU.domine.repositories.OfficeRepository;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.mapper.OfficeMapper;
-import co.edu.unimagdalena.RCU.repository.OfficeRepository;
-import co.edu.unimagdalena.RCU.service.implementation.OfficeServiceImpl;
+import co.edu.unimagdalena.RCU.services.implementation.OfficeServiceImpl;
+import co.edu.unimagdalena.RCU.services.mapper.OfficeMapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

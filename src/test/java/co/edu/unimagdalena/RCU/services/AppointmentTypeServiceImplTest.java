@@ -1,11 +1,11 @@
-package co.edu.unimagdalena.RCU.service;
+package co.edu.unimagdalena.RCU.services;
 
 import co.edu.unimagdalena.RCU.api.dto.AppointmentTypeDtos.*;
-import co.edu.unimagdalena.RCU.entities.AppointmentType;
+import co.edu.unimagdalena.RCU.domine.entities.AppointmentType;
+import co.edu.unimagdalena.RCU.domine.repositories.AppointmentTypeRepository;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
-import co.edu.unimagdalena.RCU.mapper.AppointmentTypeMapper;
-import co.edu.unimagdalena.RCU.repository.AppointmentTypeRepository;
-import co.edu.unimagdalena.RCU.service.implementation.AppointmentTypeServiceImpl;
+import co.edu.unimagdalena.RCU.services.implementation.AppointmentTypeServiceImpl;
+import co.edu.unimagdalena.RCU.services.mapper.AppointmentTypeMapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,9 +1,10 @@
-package co.edu.unimagdalena.RCU.service.mappers;
+package co.edu.unimagdalena.RCU.services.mapper;
 
 import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.*;
-import co.edu.unimagdalena.RCU.entities.DoctorSchedule;
-import co.edu.unimagdalena.RCU.entities.enums.DayOfWeek;
-import co.edu.unimagdalena.RCU.mapper.DoctorScheduleMapper;
+import co.edu.unimagdalena.RCU.domine.entities.DoctorSchedule;
+import co.edu.unimagdalena.RCU.domine.entities.enums.DayOfWeek;
+import co.edu.unimagdalena.RCU.services.mapper.DoctorScheduleMapper;
+
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

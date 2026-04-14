@@ -1,17 +1,17 @@
-package co.edu.unimagdalena.RCU.service;
+package co.edu.unimagdalena.RCU.services;
 
 import co.edu.unimagdalena.RCU.api.dto.DoctorDtos.*;
-import co.edu.unimagdalena.RCU.entities.Doctor;
-import co.edu.unimagdalena.RCU.entities.Specialty;
-import co.edu.unimagdalena.RCU.entities.enums.DocumentType;
-import co.edu.unimagdalena.RCU.entities.enums.Gender;
+import co.edu.unimagdalena.RCU.domine.entities.Doctor;
+import co.edu.unimagdalena.RCU.domine.entities.Specialty;
+import co.edu.unimagdalena.RCU.domine.entities.enums.DocumentType;
+import co.edu.unimagdalena.RCU.domine.entities.enums.Gender;
+import co.edu.unimagdalena.RCU.domine.repositories.DoctorRepository;
+import co.edu.unimagdalena.RCU.domine.repositories.SpecialtyRepository;
 import co.edu.unimagdalena.RCU.exceptions.BusinessException;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.mapper.DoctorMapper;
-import co.edu.unimagdalena.RCU.repository.DoctorRepository;
-import co.edu.unimagdalena.RCU.repository.SpecialtyRepository;
-import co.edu.unimagdalena.RCU.service.implementation.DoctorServiceImpl;
+import co.edu.unimagdalena.RCU.services.implementation.DoctorServiceImpl;
+import co.edu.unimagdalena.RCU.services.mapper.DoctorMapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

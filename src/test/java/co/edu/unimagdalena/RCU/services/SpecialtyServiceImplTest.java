@@ -1,12 +1,12 @@
-package co.edu.unimagdalena.RCU.service;
+package co.edu.unimagdalena.RCU.services;
 
 import co.edu.unimagdalena.RCU.api.dto.SpecialtyDtos.*;
-import co.edu.unimagdalena.RCU.entities.Specialty;
+import co.edu.unimagdalena.RCU.domine.entities.Specialty;
+import co.edu.unimagdalena.RCU.domine.repositories.SpecialtyRepository;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.mapper.SpecialtyMapper;
-import co.edu.unimagdalena.RCU.repository.SpecialtyRepository;
-import co.edu.unimagdalena.RCU.service.implementation.SpecialtyServiceImpl;
+import co.edu.unimagdalena.RCU.services.implementation.SpecialtyServiceImpl;
+import co.edu.unimagdalena.RCU.services.mapper.SpecialtyMapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

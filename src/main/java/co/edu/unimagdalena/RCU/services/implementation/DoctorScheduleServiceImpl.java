@@ -1,15 +1,16 @@
-package co.edu.unimagdalena.RCU.service.implementation;
+package co.edu.unimagdalena.RCU.services.implementation;
 
-import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.*;
-import co.edu.unimagdalena.RCU.entities.Doctor;
-import co.edu.unimagdalena.RCU.entities.DoctorSchedule;
+import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.CreateDoctorScheduleRequest;
+import co.edu.unimagdalena.RCU.api.dto.DoctorScheduleDtos.DoctorScheduleResponse;
+import co.edu.unimagdalena.RCU.domine.entities.Doctor;
+import co.edu.unimagdalena.RCU.domine.entities.DoctorSchedule;
+import co.edu.unimagdalena.RCU.domine.repositories.DoctorRepository;
+import co.edu.unimagdalena.RCU.domine.repositories.DoctorScheduleRepository;
 import co.edu.unimagdalena.RCU.exceptions.BusinessException;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.mapper.DoctorScheduleMapper;
-import co.edu.unimagdalena.RCU.repository.DoctorRepository;
-import co.edu.unimagdalena.RCU.repository.DoctorScheduleRepository;
-import co.edu.unimagdalena.RCU.service.DoctorScheduleService;
+import co.edu.unimagdalena.RCU.services.DoctorScheduleService;
+import co.edu.unimagdalena.RCU.services.mapper.DoctorScheduleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

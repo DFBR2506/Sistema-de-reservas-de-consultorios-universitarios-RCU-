@@ -1,8 +1,9 @@
-package co.edu.unimagdalena.RCU.service.mappers;
+package co.edu.unimagdalena.RCU.services.mapper;
 
 import co.edu.unimagdalena.RCU.api.dto.OfficeDtos.*;
-import co.edu.unimagdalena.RCU.entities.Office;
-import co.edu.unimagdalena.RCU.mapper.OfficeMapper;
+import co.edu.unimagdalena.RCU.domine.entities.Office;
+import co.edu.unimagdalena.RCU.services.mapper.OfficeMapper;
+
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

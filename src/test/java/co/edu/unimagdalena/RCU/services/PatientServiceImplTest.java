@@ -1,14 +1,14 @@
-package co.edu.unimagdalena.RCU.service;
+package co.edu.unimagdalena.RCU.services;
 
 import co.edu.unimagdalena.RCU.api.dto.PatientDtos.*;
-import co.edu.unimagdalena.RCU.entities.Patient;
-import co.edu.unimagdalena.RCU.entities.enums.DocumentType;
-import co.edu.unimagdalena.RCU.entities.enums.Gender;
+import co.edu.unimagdalena.RCU.domine.entities.Patient;
+import co.edu.unimagdalena.RCU.domine.entities.enums.DocumentType;
+import co.edu.unimagdalena.RCU.domine.entities.enums.Gender;
+import co.edu.unimagdalena.RCU.domine.repositories.PatientRepository;
 import co.edu.unimagdalena.RCU.exceptions.ConflictException;
 import co.edu.unimagdalena.RCU.exceptions.ResourceNotFoundException;
-import co.edu.unimagdalena.RCU.mapper.PatientMapper;
-import co.edu.unimagdalena.RCU.repository.PatientRepository;
-import co.edu.unimagdalena.RCU.service.implementation.PatientServiceImpl;
+import co.edu.unimagdalena.RCU.services.implementation.PatientServiceImpl;
+import co.edu.unimagdalena.RCU.services.mapper.PatientMapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

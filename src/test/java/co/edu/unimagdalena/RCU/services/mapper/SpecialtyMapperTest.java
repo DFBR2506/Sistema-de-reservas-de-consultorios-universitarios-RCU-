@@ -1,8 +1,8 @@
-package co.edu.unimagdalena.RCU.service.mappers;
+package co.edu.unimagdalena.RCU.services.mapper;
 
 import co.edu.unimagdalena.RCU.api.dto.SpecialtyDtos.*;
-import co.edu.unimagdalena.RCU.entities.Specialty;
-import co.edu.unimagdalena.RCU.mapper.SpecialtyMapper;
+import co.edu.unimagdalena.RCU.domine.entities.Specialty;
+import co.edu.unimagdalena.RCU.services.mapper.SpecialtyMapper;
 
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;

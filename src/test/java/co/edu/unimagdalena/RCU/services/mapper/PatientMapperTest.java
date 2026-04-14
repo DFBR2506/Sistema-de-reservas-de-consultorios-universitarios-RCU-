@@ -1,10 +1,11 @@
-package co.edu.unimagdalena.RCU.service.mappers;
+package co.edu.unimagdalena.RCU.services.mapper;
 
 import co.edu.unimagdalena.RCU.api.dto.PatientDtos.*;
-import co.edu.unimagdalena.RCU.entities.Patient;
-import co.edu.unimagdalena.RCU.entities.enums.DocumentType;
-import co.edu.unimagdalena.RCU.entities.enums.Gender;
-import co.edu.unimagdalena.RCU.mapper.PatientMapper;
+import co.edu.unimagdalena.RCU.domine.entities.Patient;
+import co.edu.unimagdalena.RCU.domine.entities.enums.DocumentType;
+import co.edu.unimagdalena.RCU.domine.entities.enums.Gender;
+import co.edu.unimagdalena.RCU.services.mapper.PatientMapper;
+
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
