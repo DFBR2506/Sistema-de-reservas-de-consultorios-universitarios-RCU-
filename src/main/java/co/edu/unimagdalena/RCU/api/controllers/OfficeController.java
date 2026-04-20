@@ -1,4 +1,4 @@
-package co.edu.unimagdalena.RCU.api;
+package co.edu.unimagdalena.RCU.api.controllers;
 
 import java.util.UUID;
 
