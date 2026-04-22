@@ -6,39 +6,41 @@ import java.util.UUID;
 import co.edu.unimagdalena.RCU.domine.entities.enums.DocumentType;
 import co.edu.unimagdalena.RCU.domine.entities.enums.Gender;
 
+import jakarta.validation.constraints.*;
+
 public class PatientDtos {
     public record CreatePatientRequest(
-            String firstName,
-            String lastName,
-            String email,
-            String phone,
-            DocumentType documentType,
-            String documentNumber,
-            Gender gender
+            @NotBlank(message = "First name is required") String firstName,
+            @NotBlank(message = "Last name is required") String lastName,
+            @NotBlank(message = "Email is required") @Email(message = "Email must be a valid email address") String email,
+            @NotBlank(message = "Phone is required") String phone,
+            @NotNull(message = "Document type is required") DocumentType documentType,
+            @NotBlank(message = "Document number is required") String documentNumber,
+            @NotNull(message = "Gender is required") Gender gender
     ) implements Serializable {
     }
 
     public record UpdatePatientRequest(
-            String firstName,
-            String lastName,
-            String email,
-            String phone,
-            DocumentType documentType,
-            String documentNumber,
-            Gender gender,
-            Boolean active
+            @NotBlank(message = "First name is required") String firstName,
+            @NotBlank(message = "Last name is required") String lastName,
+            @NotBlank(message = "Email is required") @Email(message = "Email must be a valid email address") String email,
+            @NotBlank(message = "Phone is required") String phone,
+            @NotNull(message = "Document type is required") DocumentType documentType,
+            @Size(max = 20, message = "Document number must be at most 20 characters") String documentNumber,
+            @NotNull(message = "Gender is required") Gender gender,
+            @NotNull(message = "Active status is required") Boolean active
     ) implements Serializable { }
 
     public record PatientResponse(
-            UUID id,
-            String firstName,
-            String lastName,
-            String email,
-            String phone,
-            DocumentType documentType,
-            String documentNumber,
-            Gender gender,
-            Boolean active
+            @NotNull(message = "ID is required") UUID id,
+            @NotBlank(message = "First name is required") String firstName,
+            @NotBlank(message = "Last name is required") String lastName,
+            @NotBlank(message = "Email is required") @Email(message = "Email must be a valid email address") String email,
+            @NotBlank(message = "Phone is required") String phone,
+            @NotNull(message = "Document type is required") DocumentType documentType,
+            @Size(max = 20, message = "Document number must be at most 20 characters") String documentNumber,
+            @NotNull(message = "Gender is required") Gender gender,
+            @NotNull(message = "Active status is required") Boolean active
     ) implements Serializable { }
 
 

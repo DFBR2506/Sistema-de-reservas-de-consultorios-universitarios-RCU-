@@ -3,8 +3,6 @@ package co.edu.unimagdalena.RCU.services.mapper;
 import co.edu.unimagdalena.RCU.api.dto.AppointmentDtos.*;
 import co.edu.unimagdalena.RCU.domine.entities.*;
 import co.edu.unimagdalena.RCU.domine.entities.enums.Status;
-import co.edu.unimagdalena.RCU.services.mapper.AppointmentMapper;
-
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
