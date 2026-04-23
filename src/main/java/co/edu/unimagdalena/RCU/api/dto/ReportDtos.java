@@ -3,10 +3,12 @@ package co.edu.unimagdalena.RCU.api.dto;
 import java.io.Serializable;
 import java.util.UUID;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class ReportDtos {
     public record OfficeOccupancyResponse(
-        UUID officeId,
-        String code,
+        @NotBlank UUID officeId,
+        @NotBlank String code,
         Long totalAppointments
     ) implements Serializable {}
 

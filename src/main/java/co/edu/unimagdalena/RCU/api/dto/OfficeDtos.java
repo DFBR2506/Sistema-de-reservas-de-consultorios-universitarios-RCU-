@@ -3,9 +3,11 @@ package co.edu.unimagdalena.RCU.api.dto;
 import java.io.Serializable;
 import java.util.UUID;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class OfficeDtos {
     public record CreateOfficeRequest(
-        String code,
+        @NotBlank String code,
         Integer floor
     ) implements Serializable {}
 

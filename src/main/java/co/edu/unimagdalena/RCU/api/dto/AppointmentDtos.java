@@ -5,13 +5,14 @@ import java.time.Instant;
 import java.util.UUID;
 
 import co.edu.unimagdalena.RCU.domine.entities.enums.Status;
+import jakarta.validation.constraints.NotBlank;
 
 public class AppointmentDtos {
     public record CreateAppointmentRequest(
-        UUID patientId,
-        UUID doctorId,
-        UUID officeId,
-        UUID appointmentTypeId,
+        @NotBlank UUID patientId,
+        @NotBlank UUID doctorId,
+        @NotBlank UUID officeId,
+        @NotBlank UUID appointmentTypeId,
         Instant startAt // no pongo endAt porque eso lo calcula el sistema dependiento el tipo de cita
     ) implements Serializable{} 
 

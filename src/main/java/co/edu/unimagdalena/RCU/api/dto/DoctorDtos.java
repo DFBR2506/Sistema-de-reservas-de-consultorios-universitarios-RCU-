@@ -5,17 +5,18 @@ import java.util.UUID;
 
 import co.edu.unimagdalena.RCU.domine.entities.enums.DocumentType;
 import co.edu.unimagdalena.RCU.domine.entities.enums.Gender;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class DoctorDtos {
     public record CreateDoctorRequest(
-        String firstName,
-        String lastName,
+        @NotBlank String firstName,
+        @NotBlank String lastName,
         String phone,
-        String email,
-        DocumentType documentType,
-        String documentNumber,
-        Gender gender, 
-        String licenseNumber,
+        @Email @NotBlank String email,
+        Gender gender,
+        @NotBlank @Size(min = 10, max = 13) String licenseNumber,
         UUID specialtyId
     ) implements Serializable{}
 
