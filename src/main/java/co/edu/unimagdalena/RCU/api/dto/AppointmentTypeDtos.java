@@ -1,23 +1,22 @@
 package co.edu.unimagdalena.RCU.api.dto;
 
 import java.io.Serializable;
-import jakarta.validation.constraints.NotBlank;
 import java.util.UUID;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.*;
 
 public class AppointmentTypeDtos {
     public record CreateAppointmentTypeRequest(
-        @NotBlank String name, 
-        @Min(1) String description,
-        @Min(1) Integer durationMinutes
+        @NotBlank(message = "Name is required") String name, 
+        @NotBlank(message = "Description is required") String description,
+        @NotNull(message = "Duration in minutes is required") @Positive Integer durationMinutes
     ) implements Serializable{ }
 
     public record AppointmentTypeResponse(
-        UUID id,
-        String name, 
-        String description,
-        Integer durationMinutes,
-        Boolean active
+        @NotNull(message = "ID is required") UUID id,
+        @NotBlank(message = "Name is required") String name, 
+        @NotBlank(message = "Description is required") String description,
+        @NotNull(message = "Duration in minutes is required") @Positive Integer durationMinutes,
+        @NotNull(message = "Active status is required") Boolean active
     ) implements Serializable{ }
 }
