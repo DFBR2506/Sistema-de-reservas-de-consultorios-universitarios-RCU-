@@ -1,13 +1,12 @@
 package co.edu.unimagdalena.RCU.security.web;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-import org.springframework.boot.security.autoconfigure.SecurityProperties.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import co.edu.unimagdalena.RCU.security.domine.entities.AppUser;
 import co.edu.unimagdalena.RCU.security.domine.entities.Role;
 import co.edu.unimagdalena.RCU.security.domine.repositories.AppUserRepository;
+import co.edu.unimagdalena.RCU.security.dto.AuthDtos.*;
 import co.edu.unimagdalena.RCU.security.jwt.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,4 +69,4 @@ public class AuthController {
 
 }
 
-}
+
